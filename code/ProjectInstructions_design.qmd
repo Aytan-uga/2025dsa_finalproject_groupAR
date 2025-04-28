@@ -106,35 +106,98 @@ A mixed-effects model (with Biological Replication as a random effect) may be us
 #Setup
 ```{r}
 library(tidyverse)
-library(car)
-library(ggplot2)
 library(lme4)
-library(lmerTest)  #for p-values in mixed model
-library(emmeans)   #for post hoc comparisons
-#install.packages("Matrix")
+library(lmerTest)
+library(emmeans)
+library(multcompView)
+library(car)
 ```
 
-#Load data
+# 1.Load and Clean data
+```{r}
+data_raw <-read.csv("../data/Copy_Listeria.csv")
+
+data_raw
+```
+
+
+#Check column names
+```{r}
+colnames(data_raw)
+```
+
+## Keep only the useful columns
+```{r}
+data_clean <- data_raw %>%
+  select(
+    Date, Treatment, Material, Biological.Replication, Technical.Replication,
+    Mean.of.Avg.Population..CFU.ml..Biological.Replication, STDEV
+  ) %>%
+  rename(
+    Mean_CFU_BioRep = Mean.of.Avg.Population..CFU.ml..Biological.Replication
+  ) %>%
+  filter(
+    !is.na(Treatment) & !is.na(Material) & !is.na(Mean_CFU_BioRep)
+  ) %>%
+  mutate(
+    Treatment = as.factor(Treatment),
+    Material = as.factor(Material),
+    Biological.Replication = as.factor(Biological.Replication)  # 🚨 KEEP IT FACTOR
+  )
+```
+ 
+# Now check bio reps
+```{r}
+table(data_clean$Biological.Replication)
+```
+
+#Ensure categorical variables and Clean data by removing NAs
 ```{r}
 
 ```
 
-#Clean and inspect data
+
+#2. Run two-way Anova
 ```{r}
 
 ```
 
 
-#Rename variables for easier handling
+# 3. Mixed-Effects Model (Random Effect for Biological Replication)
 ```{r}
+data_clean %>%
+  group_by(Treatment, Material, Biological.Replication) %>%
+  summarise(Count = sum(!is.na(Mean_Log_CFU))) %>%
+  filter(Count == 0)
+
 
 ```
 
 
-#Specify factor levels
+
+
+# Do Tukey pairwise comparisons
 ```{r}
+pairs(emm_simple, adjust = "tukey")
 
 ```
+
+# Check assumptions
+```{r}
+par(mfrow = c(2, 2))
+plot(model_simple)
+```
+
+# Check normality of residuals
+```{r}
+shapiro.test(residuals(model_simple))
+```
+
+# Check homogeneity of variances
+```{r}
+leveneTest(Mean.Log.Reduction..CFU.Coupon. ~ Treatment + Material, data = data_clean)
+```
+
 
 
 
