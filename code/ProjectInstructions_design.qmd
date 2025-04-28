@@ -137,13 +137,15 @@ data_clean <- data_raw %>%
     Mean_CFU_BioRep = Mean.of.Avg.Population..CFU.ml..Biological.Replication
   ) %>%
   filter(
-    !is.na(Treatment) & !is.na(Material) & !is.na(Mean_CFU_BioRep)
+    !is.na(Treatment) & !is.na(Material)
   ) %>%
   mutate(
     Treatment = as.factor(Treatment),
     Material = as.factor(Material),
-    Biological.Replication = as.factor(Biological.Replication)  # 🚨 KEEP IT FACTOR
+    Biological.Replication = as.factor(Biological.Replication)
   )
+
+data_clean
 ```
  
 # Now check bio reps
@@ -151,24 +153,9 @@ data_clean <- data_raw %>%
 table(data_clean$Biological.Replication)
 ```
 
-#Ensure categorical variables and Clean data by removing NAs
-```{r}
-
-```
-
-
-#2. Run two-way Anova
-```{r}
-
-```
-
-
 # 3. Mixed-Effects Model (Random Effect for Biological Replication)
 ```{r}
-data_clean %>%
-  group_by(Treatment, Material, Biological.Replication) %>%
-  summarise(Count = sum(!is.na(Mean_Log_CFU))) %>%
-  filter(Count == 0)
+
 
 
 ```
