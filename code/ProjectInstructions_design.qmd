@@ -124,28 +124,29 @@ data_raw
 
 #Check column names
 ```{r}
-colnames(data_raw)
+data_raw_1 <- clean_names(data_raw) 
+data_raw_1
+colnames(data_raw_1)
 ```
 
 ## Keep only the useful columns
 ```{r}
-data_clean <- data_raw %>%
+data_clean <- data_raw_1 %>%
   select(
-    Date, Treatment, Material, Biological.Replication, Technical.Replication,
-    Mean.of.Avg.Population..CFU.ml..Biological.Replication, STDEV
+    date, treatment, material, biological_replication, technical_replication,
+    mean_of_avg_population_cfu_ml_biological_replication  
   ) %>%
   rename(
-    Mean_CFU_BioRep = Mean.of.Avg.Population..CFU.ml..Biological.Replication
+    mean_CFU_biorep = mean_of_avg_population_cfu_ml_biological_replication  
   ) %>%
   filter(
-    !is.na(Treatment) & !is.na(Material)
+    !is.na(treatment) & !is.na(material) & !is.na(mean_CFU_biorep)
   ) %>%
   mutate(
-    Treatment = as.factor(Treatment),
-    Material = as.factor(Material),
-    Biological.Replication = as.factor(Biological.Replication)
-  ) %>%
-  clean_names()
+    treatment = as.factor(treatment),
+    material = as.factor(material),
+    biological_replication = as.factor(biological_replication)
+  )
 
 data_clean
 ```
@@ -160,12 +161,13 @@ table(data_clean$biological_replication)
 # Changing to sum-to-zero contrast
 options(contrasts = c("contr.sum", "contr.poly"))
 
-mix_mod <- lmer(mean_cfu_bio_rep ~ treatment*material +
-                      (1|biological_replication), 
+# Fit the mixed-effects model
+mix_mod <- lmer(mean_CFU_biorep ~ treatment + material +
+                      (1 | biological_replication), 
                      data = data_clean
                      )
 
-# Summary
+# Summary of the model
 summary(mix_mod)
 
 
