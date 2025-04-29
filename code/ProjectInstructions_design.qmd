@@ -116,7 +116,7 @@ library(car)
 
 # 1.Load and Clean data
 ```{r}
-data_raw <-read.csv("../data/Copy_Listeria.csv")
+data_raw <-read.csv("../data/Listeria.csv")
 
 data_raw
 ```
@@ -134,24 +134,7 @@ colnames(data_raw_1)
 
 ## Keep only the useful columns
 ```{r}
-data_clean <- data_raw_1 %>%
-  select(
-    date, treatment, material, biological_replication, technical_replication,
-    mean_of_avg_population_cfu_ml_biological_replication,
-    mean_log_reduction_cfu_coupon
-  ) %>%
-  rename(
-    mean_CFU_biorep = mean_of_avg_population_cfu_ml_biological_replication,
-    mean_log_reduction = mean_log_reduction_cfu_coupon
-  ) %>%
-  filter(
-    !is.na(treatment) & !is.na(material)
-  ) %>%
-  mutate(
-    treatment = as.factor(treatment),
-    material = as.factor(material),
-    biological_replication = as.factor(biological_replication)
-  )
+
 
 glimpse(data_clean)
 data_clean
