@@ -40,13 +40,13 @@ Describe here your hypothesis, followed by your objectives. Make sure your hypot
 
 **Variables and Research Hypotheses**
 
-***Hypothesis 1:*** Chemical sanitizing agents will be effective in inactivating *Salmonella* and *Listeria monocytogenes.* Treating food contact surfaces with commercially available chemicals containing chlorine and peracetic acid as a source of reactive oxygen species will decrease the potential pathogens *via* oxidizing essential parts of bacteria.
+***Hypothesis 1:*** Chemical sanitizing agents will be effective in inactivating *Salmonella* and *Listeria*. Treating food contact surfaces with commercially available chemicals containing chlorine and peracetic acid as a source of reactive oxygen species will decrease the potential pathogens *via* oxidizing essential parts of bacteria.
 
 Previously reported studies have shown that pathogenic bacteria, particularly *Salmonella* and *Listeria*, are considerably less prevalent on food contact surfaces that have been treated with specific chemical agents such as peracetic acid and chlorine versus untreated surfaces. As a result, these agents are suitable for sanitization procedures in food safety measures because of their quantifiable and considerable efficacy.
 
 ***Hypothesis 2:*** Surface material characteristics will impact the efficacy of cleaning and sanitization approaches evaluated. As a variable, the kind of surface material - such as foam, PVC, and interlocking belt-polypropylene - affects how the sanitization procedure turns out.
 
-Depending on the physical and chemical nature of the surface materials – such as porosity, hydrophobicity, and surface roughness different sanitization techniques will no longer effectively eradicate *Salmonella* and *Listeria* from food contact surfaces. Materials that are resistant to bacterial contamination and have varying levels of sanitization efficiency, such as foam, PVC, and interlocking belt-polypropylene, will be considered when selecting materials for food processing facilities that are safer.
+Depending on the physical and chemical nature of the surface materials – such as porosity, hydrophobicity, and surface roughness different sanitization techniques will no longer effectively eradicate *Salmonella* and *Listeria* from food contact surfaces. Materials that are resistant to bacterial contamination and have varying levels of sanitization efficiency, such as foam, PVC, and interlocking belt-polypropylene, will be considered when selecting materials for food processing facilities that are safer.
 
 # Material and Methods
 
@@ -54,7 +54,7 @@ Describe here your overall material and methods as it pertains to the analysis y
 
 **Material and Methods**
 
-Three commonly used FCS materials were selected: interlocking belt (IB) made of polypropylene, polyvinyl chloride (PVC) rollers, and closed-cell foam (CF). Coupons were spot inoculated with \~8 log CFU of an LM cocktail consisting of five produce-related outbreak strains adapted to 80 ppm rifampicin and allowed to dry for 1 h in a biosafety cabinet. FCSs were cleaned with a detergent applied as a liquid with manual brushing or as a foam, followed by rinsing and sanitization with free chlorine (350 ppm), peroxyacetic acid (350 ppm), or no sanitizer. A control group received no treatment. The coupons were neutralized in 100 mL Dey-Engley broth with 0.1 % (v/v) Tween 80 and spiral plated onto Tryptic soy agar with rifampicin (TSAR). Plates were incubated at 35 °C and enumerated after 48 h.
+Three commonly used FCS materials were selected: interlocking belt (IB) made of polypropylene, polyvinyl chloride (PVC) rollers, and closed-cell foam (CF). Coupons were spot inoculated with \~8 log CFU of an Listeria monocytogenes (LM) cocktail consisting of five produce-related outbreak strains adapted to 80 ppm rifampicin and allowed to dry for 1 h in a biosafety cabinet. FCSs were cleaned with a detergent applied as a liquid with manual brushing or as a foam, followed by rinsing and sanitization with free chlorine (350 ppm), peroxyacetic acid (350 ppm), or no sanitizer. A control group received no treatment. The coupons were neutralized in 100 mL Dey-Engley broth with 0.1 % (v/v) Tween 80 and spiral plated onto Tryptic Soy Agar with Rifampicin (TSAR). Plates were incubated at 35 °C and enumerated after 48 h.
 
 ## Study design
 
@@ -106,6 +106,7 @@ A mixed-effects model (with Biological Replication as a random effect) may be us
 #Setup
 ```{r}
 library(tidyverse)
+library(janitor)
 library(lme4)
 library(lmerTest)
 library(emmeans)
@@ -143,25 +144,32 @@ data_clean <- data_raw %>%
     Treatment = as.factor(Treatment),
     Material = as.factor(Material),
     Biological.Replication = as.factor(Biological.Replication)
-  )
+  ) %>%
+  clean_names()
 
 data_clean
 ```
  
 # Now check bio reps
 ```{r}
-table(data_clean$Biological.Replication)
+table(data_clean$biological_replication)
 ```
 
 # 3. Mixed-Effects Model (Random Effect for Biological Replication)
 ```{r}
+# Changing to sum-to-zero contrast
+options(contrasts = c("contr.sum", "contr.poly"))
 
+mix_mod <- lmer(mean_cfu_bio_rep ~ treatment*material +
+                      (1|biological_replication), 
+                     data = data_clean
+                     )
+
+# Summary
+summary(mix_mod)
 
 
 ```
-
-
-
 
 # Do Tukey pairwise comparisons
 ```{r}
@@ -185,18 +193,11 @@ shapiro.test(residuals(model_simple))
 leveneTest(Mean.Log.Reduction..CFU.Coupon. ~ Treatment + Material, data = data_clean)
 ```
 
-
-
-
 #Mixed model:Biological Replication as random effect
 ```{r}
 
 ```
-
-
-
 #Model summary
-
 
 #Anova table(type 3)
 
