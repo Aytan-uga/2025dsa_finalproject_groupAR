@@ -140,7 +140,7 @@ data_clean <- data_raw_1 %>%
     mean_CFU_biorep = mean_of_avg_population_cfu_ml_biological_replication  
   ) %>%
   filter(
-    !is.na(treatment) & !is.na(material) & !is.na(mean_CFU_biorep)
+    !is.na(treatment) & !is.na(material) 
   ) %>%
   mutate(
     treatment = as.factor(treatment),
