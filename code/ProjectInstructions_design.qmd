@@ -106,17 +106,19 @@ A mixed-effects model (with Biological Replication as a random effect) may be us
 #Setup
 ```{r}
 library(tidyverse)
-library(janitor)
 library(lme4)
 library(lmerTest)
 library(emmeans)
-library(multcompView)
 library(car)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+
 ```
 
 # 1.Load and Clean data
 ```{r}
-data_raw <-read.csv("../data/Listeria.csv")
+data_raw <-read.csv("../data/Listeria for R.csv")
 
 data_raw
 ```
@@ -124,80 +126,130 @@ data_raw
 summary(data_raw)
 ```
 
-
 #Check column names
 ```{r}
-data_raw_1 <- clean_names(data_raw) 
-data_raw_1
-colnames(data_raw_1)
-```
-
-## Keep only the useful columns
-```{r}
-
-
-glimpse(data_clean)
+data_clean <- data_raw %>%
+  janitor::clean_names() %>%
+  select(date, treatment, material, biological_replication, population_log_cfu_coupon) %>%
+  mutate(
+    treatment = str_trim(treatment),
+    material = str_trim(material),
+    biological_replication = as.factor(biological_replication)
+  ) %>%
+  drop_na()
 data_clean
+str(data_clean)
+```
+
+##  Descriptive summary for each treatment × material × bio rep
+```{r}
+summary_stats <- data_clean %>%
+  group_by(treatment, material, biological_replication) %>%
+  summarise(
+    mean_log_cfu = mean(population_log_cfu_coupon),
+    sd_log_cfu = sd(population_log_cfu_coupon),
+    .groups = "drop"
+  )
+summary_stats
+```
+
+
+## Mixed-effects model: Treatment × Material, with random intercept for Bio Rep
+```{r}
 
 ```
+
+
+## Type III ANOVA table
 ```{r}
-data_clean %>%
-  dplyr::select(treatment,
-                material,
-                biological_replication,
-                mean_log_reduction
-                ) %>%
-  drop_na(mean_log_reduction)
+
 ```
+
+
+
+
+
+# 4. Main Effects (if Interaction is Significant)
+# Check interaction first
+```{r}
+
+```
+
+# If interaction is significant (p < 0.05), explore it
+# If not, can check main effects separately
+
+## 5. Post hoc comparisons with Tukey adjustment
+```{r}
+
+```
+
+# Step 6: Diagnostic plots for mixed model
+#Residuals vs Fitted
+```{r}
+
+```
+
+
+# QQ plot for normality
+```{r}
+
+```
+
+
+# Shapiro-Wilk test for normality
+```{r}
+
+```
+
+# Levene's Test for homogeneity of variance
+```{r}
+
+```
+
+
+# Histogram of residuals
+```{r}
+
+```
+
+
+# 7. Summary Output
+```{r}
+
+```
+
+
+# 8. Save summary if needed
+```{r}
+
+```
+
+# # 9. Plot Estimated Marginal Means
+```{r}
+
+```
+
+
+# 10. BONUS: Plot Mean Log CFU by Treatment and Material
+```{r}
+
+```
+
+
+
+
  
-# Now check bio reps
-```{r}
-table(data_clean$biological_replication)
-```
+  
 
-# 3. Mixed-Effects Model (Random Effect for Biological Replication)
-```{r}
-# Changing to sum-to-zero contrast
-options(contrasts = c("contr.sum", "contr.poly"))
 
-# Fit the mixed-effects model
-mix_mod <- lmer(mean_CFU_biorep ~ treatment + material +
-                      (1 | biological_replication), 
-                     data = data_clean
-                     )
 
-# Summary of the model
-summary(mix_mod)
+
+
+
 
 
 ```
 
-# Do Tukey pairwise comparisons
-```{r}
-pairs(emm_simple, adjust = "tukey")
-
-```
-
-# Check assumptions
-```{r}
-par(mfrow = c(2, 2))
-plot(model_simple)
-```
-
-# Check normality of residuals
-```{r}
-shapiro.test(residuals(model_simple))
-```
-
-# Check homogeneity of variances
-```{r}
-leveneTest(Mean.Log.Reduction..CFU.Coupon. ~ Treatment + Material, data = data_clean)
-```
-
-#Mixed model:Biological Replication as random effect
-```{r}
-
-```
 #Model summary
 
 #Anova table(type 3)
