@@ -172,17 +172,15 @@ summary(mix_mod)
 
 ## Type III ANOVA table
 ```{r}
+options(scipen = 0)
 Anova (mix_mod, type=3)
 ```
-
-
-
-
 
 # 4. Main Effects (if Interaction is Significant)
 # Check interaction first
 ```{r}
-
+interaction_test <- anova(mix_mod, type = 3)
+print(interaction_test)
 ```
 
 # If interaction is significant (p < 0.05), explore it
@@ -190,13 +188,16 @@ Anova (mix_mod, type=3)
 
 ## 5. Post hoc comparisons with Tukey adjustment
 ```{r}
+emmeans_mix <- emmeans(mix_mod, ~ treatment * material)
+pairs(emmeans_mix, adjust = "tukey")
 
 ```
 
 # Step 6: Diagnostic plots for mixed model
 #Residuals vs Fitted
 ```{r}
-
+plot(fitted(mix_mod), resid(mix_mod))
+abline(h = 0, col = "red")
 ```
 
 
