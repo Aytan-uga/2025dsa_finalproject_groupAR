@@ -156,13 +156,23 @@ summary_stats
 
 ## Mixed-effects model: Treatment × Material, with random intercept for Bio Rep
 ```{r}
+# Changing to sum-to-zero contrast
+options(contrasts = c("contr.sum", "contr.poly"))
 
+# Model fitting
+mix_mod <- lmer(mean_log_cfu ~ material*treatment +
+                      (1|biological_replication), 
+                     data = summary_stats
+                     )
+
+# Summary
+summary(mix_mod)
 ```
 
 
 ## Type III ANOVA table
 ```{r}
-
+Anova (mix_mod, type=3)
 ```
 
 
