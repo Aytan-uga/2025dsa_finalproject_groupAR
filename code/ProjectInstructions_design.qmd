@@ -30,7 +30,7 @@ To get you setup, you will need to:
 
 Describe here the introduction of your problem. Consider this as a shortened version of your paper, where you will briefly discuss in 3-4 paragraphs what is the issue/gap in literature, and how the data you collected will help answer this gap.
 
-**#Introduction**
+**Introduction**
 
 In the fresh produce industry, increased concerns of cross-contamination from food contact surfaces (FCS) regularly encountered during postharvest handling have led many to scrutinize their sanitation regimes. Toward this goal, developing efficient, low-cost, and appropriate sanitation techniques while considering the nature of the FCS material needs to be broadly studied.
 
@@ -40,19 +40,19 @@ Describe here your hypothesis, followed by your objectives. Make sure your hypot
 
 **Variables and Research Hypotheses**
 
-***Hypothesis 1:*** Chemical sanitizing agents will be effective in inactivating *Salmonella* and *Listeria*. Treating food contact surfaces with commercially available chemicals containing chlorine and peracetic acid as a source of reactive oxygen species will decrease the potential pathogens *via* oxidizing essential parts of bacteria.
+***Hypothesis 1:*** Chemical sanitizing agents will be effective in inactivating *Listeria*. Treating food contact surfaces with commercially available chemicals containing chlorine and peroxyacetic acid (PAA) as a source of reactive oxygen species will decrease the potential pathogens *via* oxidizing essential parts of bacteria.
 
-Previously reported studies have shown that pathogenic bacteria, particularly *Salmonella* and *Listeria*, are considerably less prevalent on food contact surfaces that have been treated with specific chemical agents such as peracetic acid and chlorine versus untreated surfaces. As a result, these agents are suitable for sanitization procedures in food safety measures because of their quantifiable and considerable efficacy.
+Previously reported studies have shown that pathogenic bacteria, particularly *Listeria*, are considerably less prevalent on food contact surfaces that have been treated with specific chemical agents such as peroxyacetic acid and chlorine versus untreated surfaces. As a result, these agents are suitable for sanitization procedures in food safety measures because of their quantifiable and considerable efficacy.
 
-***Hypothesis 2:*** Surface material characteristics will impact the efficacy of cleaning and sanitization approaches evaluated. As a variable, the kind of surface material - such as foam, PVC, and interlocking belt-polypropylene - affects how the sanitization procedure turns out.
+***Hypothesis 2:*** Surface material characteristics will impact the efficacy of cleaning and sanitization approaches evaluated. As a variable, the kind of surface material - such as closed-cell foam, polyvinyl chloride (PVC), and interlocking belt-polypropylene - affects how the sanitization procedure turns out.
 
-Depending on the physical and chemical nature of the surface materials – such as porosity, hydrophobicity, and surface roughness different sanitization techniques will no longer effectively eradicate *Salmonella* and *Listeria* from food contact surfaces. Materials that are resistant to bacterial contamination and have varying levels of sanitization efficiency, such as foam, PVC, and interlocking belt-polypropylene, will be considered when selecting materials for food processing facilities that are safer.
+Depending on the physical and chemical nature of the surface materials – such as porosity, hydrophobicity, and surface roughness different sanitization techniques will no longer effectively eradicate *Listeria* from food contact surfaces. Materials that are resistant to bacterial contamination and have varying levels of sanitization efficiency, such as foam, PVC, and interlocking belt-polypropylene, will be considered when selecting materials for food processing facilities that are safer.
 
 # Material and Methods
 
 Describe here your overall material and methods as it pertains to the analysis you will conduct, including study description, site/setup description, what equipment was used, etc. just like you would in a paper. Make sure to clearly explain what was measured and how.
 
-**Material and Methods**
+***Material and Methods***
 
 Three commonly used FCS materials were selected: interlocking belt (IB) made of polypropylene, polyvinyl chloride (PVC) rollers, and closed-cell foam (CF). Coupons were spot inoculated with \~8 log CFU of an Listeria monocytogenes (LM) cocktail consisting of five produce-related outbreak strains adapted to 80 ppm rifampicin and allowed to dry for 1 h in a biosafety cabinet. FCSs were cleaned with a detergent applied as a liquid with manual brushing or as a foam, followed by rinsing and sanitization with free chlorine (350 ppm), peroxyacetic acid (350 ppm), or no sanitizer. A control group received no treatment. The coupons were neutralized in 100 mL Dey-Engley broth with 0.1 % (v/v) Tween 80 and spiral plated onto Tryptic Soy Agar with Rifampicin (TSAR). Plates were incubated at 35 °C and enumerated after 48 h.
 
@@ -60,9 +60,9 @@ Three commonly used FCS materials were selected: interlocking belt (IB) made of 
 
 Clearly describe your study design here, including treatment design (which factors and levels, the hierarchy among them, etc.), and your experimental design (number of reps/blocks, how was randomization performed, etc.), as we talked about in class.
 
-**Study Design**
+***Study Design***
 
-**Treatment Design**
+**Treatment Desig**
 This was a two-factor factorial experiment with both factors treated as fixed effects.
 
 **Factor 1**: Treatment Type
@@ -79,12 +79,13 @@ Six treatment methods were evaluated:
 **Factor 2**: Material Type
 Three food contact surface (FCS) types were included:
 - Closed-cell foam
-- PVC (Polyvinyl Chloride)
-- Interlocking-belt polypropylene
+- Polyvinyl Chloride (PVC)
+- Interlocking-belt polypropylene (IB)
 
 This design was fully crossed: each treatment was applied to each surface type.
 
 **Experimental Design**
+
 Replication:
 **Each treatment × surface combination** was replicated nine times **(n = 9)**. Each replicate consisted of an independent coupon (biological replicate) treated and processed separately.
 
@@ -95,7 +96,7 @@ Treatments and materials were applied in a randomized order, and sample enumerat
 
 Describe here your statistical analysis, including what type of ANOVA model you ran (based on the design above), what was your response variable, what were your explanatory variables and how were the explanatory variables treated (random or fixed). Provide your alpha level. Explain which function from which package you used to analyze this data. Explain how you checked linear model assumptions and whether or not they were met. Overall, make sure you explain in sufficient detail that, if given your data, a knowledgeable person would be able to reproduce your analysis exactly.
 
-**Statistical analysis**
+***Statistical analysis***
 A two-way ANOVA was used with:
 - Fixed effects: Treatment, Material, and their interaction
 - Response variable: Log reduction CFU/coupon
@@ -113,6 +114,7 @@ library(car)
 library(ggplot2)
 library(dplyr)
 library(stringr)
+library(forcats)
 
 ```
 
@@ -169,22 +171,40 @@ mix_mod <- lmer(mean_log_cfu ~ material*treatment +
 summary(mix_mod)
 ```
 
+#Interpretation:
 
-## Type III ANOVA table
+##These results support the idea that both treatment type and surface material significantly influence Listeria monocytogenes reduction. The presence of significant coefficients for materials and several treatments implies that these factors affect microbial survival independently, and possibly interactively.
+
+## Estimated marginal means
 ```{r}
-options(scipen = 0)
-Anova (mix_mod, type=3)
-```
+emmeans_mixed <- emmeans(mix_mod, ~ treatment * material)
 
-# 4. Main Effects (if Interaction is Significant)
-# Check interaction first
+emmeans_mixed
+```
+#Answer:
+##This output shows the log CFU reduction (emmean) for each combination of treatment and food contact surface material. These EMMs represent the expected microbial reduction after accounting for random variation from biological replication.
+
+##What we see:
+#1. Without Treatment consistently has the highest mean log CFU values (e.g., 8.20 for PVC, 8.19 for interlocking polypropylene), indicating no microbial reduction, as expected.
+
+#2.Treatments like Det+Chlorine and Det+PAA on interlocking belt-polypropylene and PVC show lower emmeans (e.g., ~4.2–4.7), suggesting strong inactivation.
+
+#3.Confidence intervals (CI) are provided in columns lower.CL and upper.CL. Non-overlapping CIs between treatments and materials suggest statistically significant differences.
+
+
+## 4. Type III ANOVA table and Main Effects (if Interaction is Significant)
+
 ```{r}
 interaction_test <- anova(mix_mod, type = 3)
 print(interaction_test)
 ```
+#Answer
+##Main effects of both treatment and material are highly significant, indicating that each independently influences the reduction of Listeria monocytogenes (log CFU/coupon).
 
-# If interaction is significant (p < 0.05), explore it
-# If not, can check main effects separately
+##The interaction between treatment and material is also statistically significant (p = 0.036). This confirms that the effectiveness of each treatment depends on the surface material used.
+
+##These findings support the need to explore which treatments perform best on which surfaces, using post hoc tests and estimated marginal means for deeper insights.
+
 
 ## 5. Post hoc comparisons with Tukey adjustment
 ```{r}
@@ -193,84 +213,188 @@ pairs(emmeans_mix, adjust = "tukey")
 
 ```
 
-# Step 6: Diagnostic plots for mixed model
-#Residuals vs Fitted
-```{r}
-plot(fitted(mix_mod), resid(mix_mod))
-abline(h = 0, col = "red")
+# Step 6: Checking model assumptions 
+
+- Independence (no pattern)  
+- Variance homogeneity (homoscedasticity)  
+- Normality  
+- Outlier detection (< -3 or > 3) 
+
+## Extracting residuals
+First, extract our model residuals, and also create studentized residuals.  
+
+```{r rcbd_mix_resid}
+library(broom.mixed)
+mix_mod_resid <- augment(mix_mod) %>%
+  mutate(.studresid=rstudent(mix_mod))
+
+mix_mod_resid
+```
+### Random effects are iid ~ N(0,var_a)  
+```{r randeff_rep}
+randeff_rep <- ranef(mix_mod) [[1]]
+
+randeff_rep
 ```
 
-# QQ plot for normality
-```{r}
+#Answer
+##The random intercepts for biological replication varied only modestly (ranging from −0.20 to +0.11), indicating that variation among replicates was minor. This justifies treating biological replication as a random effect in the mixed-effects model to account for repeated measures without influencing treatment inference.
 
+
+# QQ plot to check for assumptions on random effects. 
+
+```{r QQ plot for random effects}
+ggplot(randeff_rep, aes(sample=`(Intercept)`))+
+  stat_qq(  shape = 21,
+            fill = "purple", 
+            size = 3,
+            alpha = .7
+  )+
+  stat_qq_line()+
+  labs(x = "Theoretical quantile",
+       y = "Sample quantile")+
+  theme_bw()
 ```
+#Answer:
+##Nothing to worry here, especially since we only have 3 points.  
 
-
-# Shapiro-Wilk test for normality
-```{r}
-
+### Within-group errors are iid ~ N(0, var_e) 
+```{r }
+ggplot(mix_mod_resid, aes(x=.fitted, y=.studresid))+
+  geom_hline(yintercept = 0, color="red")+
+  geom_point(shape = 21,
+             fill = "purple", 
+             size = 3,
+             alpha = .7)+
+  geom_smooth()+
+  geom_hline(yintercept = c(-3,3), color = "red")+
+  theme_bw()
 ```
+#Answer:
 
-# Levene's Test for homogeneity of variance
+**Independence**: seems liker there is a potential pattern, but since error bands comprise 0 on the y-axis, I'm not worried.  
+
+- **Variance homoscedastic**: seems constant across the x-axis.   
+
+- **Outliers**: nothing outside the -3,3 boundaries. 
+
+## QQ plot 
 ```{r}
-
+ggplot(mix_mod_resid, aes(sample=.studresid))+
+  stat_qq(  shape = 21,
+            fill = "purple", 
+            size = 3,
+            alpha = .7
+  )+
+  stat_qq_line()+
+  labs(x = "Theoretical quantile",
+       y = "Sample quantile")+
+  theme_bw()
 ```
+#Answer:
+##The QQ plot of standardized residuals showed that the points aligned closely along the 45-degree reference line, indicating that the residuals are approximately normally distributed. This supports the validity of the normality assumption required for the linear mixed-effects model.
 
-
-# Histogram of residuals
+## Density plot
 ```{r}
-
+ggplot(mix_mod_resid, aes(x=.studresid))+
+  geom_density(color = "black",
+               fill = "purple",
+               alpha = .7)+
+  scale_x_continuous(breaks = c(-3,0,3), limits = c(-3,3))+
+  theme_bw()
 ```
-
+#Answer:
+**Normality**: residuals seem normal.  
 
 # 7. Summary Output
 ```{r}
-
+summary(mix_mod)
 ```
 
 
 # 8. Save summary if needed
 ```{r}
+summary_df <- broom::tidy(mix_mod)
+write_csv(summary_df, "../output/summary_stats.csv")
 
 ```
 
-# # 9. Plot Estimated Marginal Means
+# 9.Create dataframe for plotting
 ```{r}
+emm_df <- as.data.frame(emmeans_mixed) %>%
+  mutate(
+    group = case_when(
+      str_detect(treatment, "Chlorine") ~ "Chlorine",
+      str_detect(treatment, "PAA") | str_detect(treatment, "SaniDate") ~ "PAA",
+      str_detect(treatment, "Water") ~ "Water",
+      str_detect(treatment, "Without") ~ "Control",
+      TRUE ~ "Other"
+    ),
+    treatment_material = paste(treatment, material),
+    treatment_material = fct_reorder(treatment_material, emmean)
+  )
 
+emm_df
 ```
+
+
+
+## Plot Estimated Marginal 
+```{r}
+ggplot(emm_df, aes(x = emmean, y = treatment_material, color = group)) +
+  geom_point(size = 3) +
+  geom_errorbarh(aes(xmin = lower.CL, xmax = upper.CL), height = 0.25) +
+  scale_color_manual(values = c("Chlorine" = "forestgreen", "PAA" = "dodgerblue", "Water" = "darkorange", "Control" = "red", "Other" = "gray50")) +
+  labs(
+    x = "Estimated Marginal Mean (Log CFU/coupon)",
+    y = "Treatment × Material",
+    color = "Sanitizer Group",
+    title = "Estimated Log Reduction by Treatment and Surface Type",
+    subtitle = "95% Confidence Intervals shown"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(axis.text.y = element_text(size = 10), panel.grid.major.y = element_blank())
+```
+#Answer:
+##The plot of estimated marginal means clearly shows that sanitizer type and surface material substantially influenced the inactivation of L. monocytogenes.
+
+##Control treatments (red) had the least reduction, confirming expected results.
+
+##Treatments involving chlorine (green) and peracetic acid (PAA) (blue) generally resulted in greater log reductions, particularly on Foam and PVC.
+
+##The variability (CI width) was more pronounced for some combinations, reflecting biological replication effects.
+
+##This graphical summary supports the significant main effects and interaction found in the ANOVA, and highlights that sanitizing efficacy is not uniform across surface types or agents. These results justify the use of pairwise post hoc comparisons to identify which combinations significantly differ from each other.
 
 
 # 10. BONUS: Plot Mean Log CFU by Treatment and Material
 ```{r}
+data_clean$material <- gsub("Interlocking belt- polypropylene", 
+                            "Interlocking belt-\npolypropylene", 
+                            data_clean$material)
+
+ggplot(summary_stats, aes(x = treatment, y = mean_log_cfu, fill = material)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin = mean_log_cfu - sd_log_cfu, ymax = mean_log_cfu + sd_log_cfu),
+                width = 0.2, position = position_dodge(width = 0.9)) +
+  facet_wrap(~ material) +
+  labs(
+    title = expression(italic("Listeria monocytogenes")~"Reductions on Food Contact Surfaces"),
+    y = expression(italic("L. monocytogenes")~"reduction (log CFU/coupon)"),
+    x = "Treatment"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    strip.text = element_text(size = 14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+  )
 
 ```
-
-
-
-
- 
-  
-
-
-###Do not delete headings           
-
-#Model summary
-
-#Anova table(type 3)
-
-
-#Post hoc comparisons
-
-
-#Main effect (if interaction is  significant or not)
-
-
-#Plot estimated marginal means
-
-
-#Diagnostic plots
-
-
+```{r}
+ggsave("listeria_reduction_plotlv.png", 
+       width = 12, height = 6, dpi = 600)  # 600 DPI is print-quality
+```
 
 # Results
 
@@ -281,6 +405,18 @@ Make sure to run a model that reflects your study design. Even if your study des
 Before each chunk, describe the steps being performed in that chunk. For example, "Here I will load the data".
 
 If a chunk produces output, like printing a data frame, statistical summary, a plot, ANOVA table, etc., make sure to write text interpreting what you see and how you can/will use that information to move forward to the next steps in the workflow.
+
+***Results***
+
+#Answer
+#This bar plot illustrates the mean log reductions of L. monocytogenes (± SD) across seven treatment types and three surface materials: Foam, Interlocking Belt-Polypropylene, and PVC.
+
+#Foam : Greater variability in responses, but Without Treatment led to the highest bacterial counts (lowest reduction).
+
+#Interlocking belt-polypropylene : Showed overall higher efficacy of sanitizers, especially with Det+Chlorine and Foam+Chlorine, which achieved the highest log reductions.
+
+#PVC : Responses were more consistent but showed slightly lower average reductions than interlocking belt.
+
 
 # Team work in GitHub
 
