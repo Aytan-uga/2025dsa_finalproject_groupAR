@@ -56,13 +56,13 @@ Describe here your overall material and methods as it pertains to the analysis y
 
 Three commonly used FCS materials were selected: interlocking belt (IB) made of polypropylene, polyvinyl chloride (PVC) rollers, and closed-cell foam (CF). Coupons were spot inoculated with \~8 log CFU of an Listeria monocytogenes (LM) cocktail consisting of five produce-related outbreak strains adapted to 80 ppm rifampicin and allowed to dry for 1 h in a biosafety cabinet. FCSs were cleaned with a detergent applied as a liquid with manual brushing or as a foam, followed by rinsing and sanitization with free chlorine (350 ppm), peroxyacetic acid (350 ppm), or no sanitizer. A control group received no treatment. The coupons were neutralized in 100 mL Dey-Engley broth with 0.1 % (v/v) Tween 80 and spiral plated onto Tryptic Soy Agar with Rifampicin (TSAR). Plates were incubated at 35 °C and enumerated after 48 h.
 
-## Study design
+# Study design
 
 Clearly describe your study design here, including treatment design (which factors and levels, the hierarchy among them, etc.), and your experimental design (number of reps/blocks, how was randomization performed, etc.), as we talked about in class.
 
 ***Study Design***
 
-**Treatment Desig**
+**Treatment Design**
 This was a two-factor factorial experiment with both factors treated as fixed effects.
 
 **Factor 1**: Treatment Type
@@ -103,8 +103,8 @@ A two-way ANOVA was used with:
 
 A mixed-effects model (with Biological Replication as a random effect) may be used to account for block effects. Post hoc pairwise comparisons were conducted using emmeans or Tukey-adjusted tests. Residual diagnostics were used to verify assumptions of normality and homogeneity of variance.
 
-**Script** 
-#Setup
+***Script*** 
+# Setup
 ```{r}
 library(tidyverse)
 library(lme4)
@@ -118,7 +118,7 @@ library(forcats)
 
 ```
 
-# 1.Load and Clean data
+# Load and Clean data
 ```{r}
 data_raw <-read.csv("../data/Listeria for R.csv")
 
@@ -128,7 +128,7 @@ data_raw
 summary(data_raw)
 ```
 
-#Check column names
+# Check column names
 ```{r}
 data_clean <- data_raw %>%
   janitor::clean_names() %>%
@@ -143,7 +143,7 @@ data_clean
 str(data_clean)
 ```
 
-##  Descriptive summary for each treatment × material × bio rep
+## Descriptive summary for each treatment × material × bio rep
 ```{r}
 summary_stats <- data_clean %>%
   group_by(treatment, material, biological_replication) %>%
@@ -181,10 +181,10 @@ emmeans_mixed <- emmeans(mix_mod, ~ treatment * material)
 
 emmeans_mixed
 ```
-#Answer:
+#Interpretation:
 ##This output shows the log CFU reduction (emmean) for each combination of treatment and food contact surface material. These EMMs represent the expected microbial reduction after accounting for random variation from biological replication.
 
-##What we see:
+***What we see*** 
 #1. Without Treatment consistently has the highest mean log CFU values (e.g., 8.20 for PVC, 8.19 for interlocking polypropylene), indicating no microbial reduction, as expected.
 
 #2.Treatments like Det+Chlorine and Det+PAA on interlocking belt-polypropylene and PVC show lower emmeans (e.g., ~4.2–4.7), suggesting strong inactivation.
@@ -192,13 +192,13 @@ emmeans_mixed
 #3.Confidence intervals (CI) are provided in columns lower.CL and upper.CL. Non-overlapping CIs between treatments and materials suggest statistically significant differences.
 
 
-## 4. Type III ANOVA table and Main Effects (if Interaction is Significant)
+## Type III ANOVA table and Main Effects (if Interaction is Significant)
 
 ```{r}
 interaction_test <- anova(mix_mod, type = 3)
 print(interaction_test)
 ```
-#Answer
+#Interpretation:
 ##Main effects of both treatment and material are highly significant, indicating that each independently influences the reduction of Listeria monocytogenes (log CFU/coupon).
 
 ##The interaction between treatment and material is also statistically significant (p = 0.036). This confirms that the effectiveness of each treatment depends on the surface material used.
@@ -206,7 +206,7 @@ print(interaction_test)
 ##These findings support the need to explore which treatments perform best on which surfaces, using post hoc tests and estimated marginal means for deeper insights.
 
 
-## 5. Post hoc comparisons with Tukey adjustment
+## Post hoc comparisons with Tukey adjustment
 ```{r}
 emmeans_mix <- emmeans(mix_mod, ~ treatment * material)
 pairs(emmeans_mix, adjust = "tukey")
@@ -255,10 +255,10 @@ ggplot(randeff_rep, aes(sample=`(Intercept)`))+
        y = "Sample quantile")+
   theme_bw()
 ```
-#Answer:
-##Nothing to worry here, especially since we only have 3 points.  
+#Interpretation:
+## Nothing to worry here, especially since we only have 3 points.  
 
-### Within-group errors are iid ~ N(0, var_e) 
+## Within-group errors are iid ~ N(0, var_e) 
 ```{r }
 ggplot(mix_mod_resid, aes(x=.fitted, y=.studresid))+
   geom_hline(yintercept = 0, color="red")+
@@ -270,13 +270,13 @@ ggplot(mix_mod_resid, aes(x=.fitted, y=.studresid))+
   geom_hline(yintercept = c(-3,3), color = "red")+
   theme_bw()
 ```
-#Answer:
+#Interpretation:
 
 **Independence**: seems liker there is a potential pattern, but since error bands comprise 0 on the y-axis, I'm not worried.  
 
-- **Variance homoscedastic**: seems constant across the x-axis.   
+**Variance homoscedastic**: seems constant across the x-axis.   
 
-- **Outliers**: nothing outside the -3,3 boundaries. 
+**Outliers**: nothing outside the -3,3 boundaries. 
 
 ## QQ plot 
 ```{r}
@@ -291,7 +291,7 @@ ggplot(mix_mod_resid, aes(sample=.studresid))+
        y = "Sample quantile")+
   theme_bw()
 ```
-#Answer:
+#Interpretation:
 ##The QQ plot of standardized residuals showed that the points aligned closely along the 45-degree reference line, indicating that the residuals are approximately normally distributed. This supports the validity of the normality assumption required for the linear mixed-effects model.
 
 ## Density plot
@@ -303,7 +303,7 @@ ggplot(mix_mod_resid, aes(x=.studresid))+
   scale_x_continuous(breaks = c(-3,0,3), limits = c(-3,3))+
   theme_bw()
 ```
-#Answer:
+#Interpretation:
 **Normality**: residuals seem normal.  
 
 # 7. Summary Output
@@ -312,14 +312,14 @@ summary(mix_mod)
 ```
 
 
-# 8. Save summary if needed
+# Save summary if needed
 ```{r}
 summary_df <- broom::tidy(mix_mod)
 write_csv(summary_df, "../output/summary_stats.csv")
 
 ```
 
-# 9.Create dataframe for plotting
+# Create dataframe for plotting
 ```{r}
 emm_df <- as.data.frame(emmeans_mixed) %>%
   mutate(
@@ -355,7 +355,7 @@ ggplot(emm_df, aes(x = emmean, y = treatment_material, color = group)) +
   theme_minimal(base_size = 13) +
   theme(axis.text.y = element_text(size = 10), panel.grid.major.y = element_blank())
 ```
-#Answer:
+#Interpretation:
 ##The plot of estimated marginal means clearly shows that sanitizer type and surface material substantially influenced the inactivation of L. monocytogenes.
 
 ##Control treatments (red) had the least reduction, confirming expected results.
@@ -367,7 +367,7 @@ ggplot(emm_df, aes(x = emmean, y = treatment_material, color = group)) +
 ##This graphical summary supports the significant main effects and interaction found in the ANOVA, and highlights that sanitizing efficacy is not uniform across surface types or agents. These results justify the use of pairwise post hoc comparisons to identify which combinations significantly differ from each other.
 
 
-# 10. BONUS: Plot Mean Log CFU by Treatment and Material
+# BONUS: Plot Mean Log CFU by Treatment and Material
 ```{r}
 data_clean$material <- gsub("Interlocking belt- polypropylene", 
                             "Interlocking belt-\npolypropylene", 
@@ -408,7 +408,7 @@ If a chunk produces output, like printing a data frame, statistical summary, a p
 
 ***Results***
 
-#Answer
+#Interpretation:
 #This bar plot illustrates the mean log reductions of L. monocytogenes (± SD) across seven treatment types and three surface materials: Foam, Interlocking Belt-Polypropylene, and PVC.
 
 #Foam : Greater variability in responses, but Without Treatment led to the highest bacterial counts (lowest reduction).
