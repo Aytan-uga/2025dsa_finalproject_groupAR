@@ -200,7 +200,6 @@ plot(fitted(mix_mod), resid(mix_mod))
 abline(h = 0, col = "red")
 ```
 
-
 # QQ plot for normality
 ```{r}
 
@@ -251,12 +250,6 @@ abline(h = 0, col = "red")
 
  
   
-
-
-
-
-
-
 
 
 ###Do not delete headings           
